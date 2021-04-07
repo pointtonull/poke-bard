@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Vim guttentag
+tags
+
 # C extensions
 *.so
 

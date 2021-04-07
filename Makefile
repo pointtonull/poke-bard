@@ -142,12 +142,8 @@ graph: doc/pipeline.png doc/pipeline.txt ## Creates diagraph using relationships
 	@cat doc/pipeline.txt
 doc/pipeline.png: doc/pipeline.dot
 	@dot doc/pipeline.dot -Tpng -o doc/pipeline.png
-	@git add doc/pipeline.png
-	@git commit -m "updated architecture diagram"
 doc/pipeline.txt: doc/pipeline.dot
 	@graph-easy doc/pipeline.dot --boxart > doc/pipeline.txt
-	@git add doc/pipeline.txt
-	@git commit -m "updated architecture diagram"
 
 list-outputs:  ## List stack outputs
 	@aws cloudformation describe-stacks                                           \

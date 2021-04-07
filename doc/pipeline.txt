@@ -6,11 +6,11 @@
                                                     ▼
 ┌−−−−−−−−−−−−−−−−−−−−−−┐                          ┌────────────────────┐
 ╎       Service        ╎  Translate description   │         λ          │
-╎ SakespeareTranslator ╎ ◀╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴ │      FastAPI       │
+╎ SakespeareTranslator ╎ ╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴ │      FastAPI       │
 └−−−−−−−−−−−−−−−−−−−−−−┘                          └────────────────────┘
                                                     ╵
                                                     ╵ Fetch description
-                                                    ▼
+                                                    ╵
                                                   ┌−−−−−−−−−−−−−−−−−−−−┐
                                                   ╎      Service       ╎
                                                   ╎      PokeAPI       ╎

@@ -1,0 +1,19 @@
+digraph Pipeline{
+
+/*    rankdir = LR*/
+    rankdir = TB
+    {rank=max; API}
+    {rank=min; S_PokeAPI; S_SakespeareTranslator}
+
+    API [label="API\nGateway"]
+    L_FastAPI  [label="λ\nFastAPI"]
+    D_Cache  [label="DynamoDB\nCache"]
+    S_PokeAPI  [label="Service\nPokeAPI", style="dashed"]
+    S_SakespeareTranslator  [label="Service\nSakespeareTranslator", style="dashed"]
+
+    API -> L_FastAPI
+    L_FastAPI -> D_Cache [label="Lookup\nCache"]
+    L_FastAPI -> S_PokeAPI [label="Fetch\ndescription", style="dashed", arrowhead="none"]
+    L_FastAPI -> S_SakespeareTranslator [label="Translate\ndescription", style="dashed", arrowhead="none"]
+
+}

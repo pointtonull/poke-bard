@@ -1,17 +1,19 @@
-                                                  ┌────────────────────┐
-                                                  │    API Gateway     │
-                                                  └────────────────────┘
-                                                    │
-                                                    │
-                                                    ▼
-┌−−−−−−−−−−−−−−−−−−−−−−┐                          ┌────────────────────┐
-╎       Service        ╎  Translate description   │         λ          │
-╎ SakespeareTranslator ╎ ╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴╴ │      FastAPI       │
-└−−−−−−−−−−−−−−−−−−−−−−┘                          └────────────────────┘
-                                                    ╵
-                                                    ╵ Fetch description
-                                                    ╵
-                                                  ┌−−−−−−−−−−−−−−−−−−−−┐
-                                                  ╎      Service       ╎
-                                                  ╎      PokeAPI       ╎
-                                                  └−−−−−−−−−−−−−−−−−−−−┘
+                           ┌──────────┐
+                           │   API    │
+                           │ Gateway  │
+                           └──────────┘
+                             │
+                             │
+                             ▼
+┌−−−−−−−−−┐  Fetch         ┌──────────┐  Translate     ┌−−−−−−−−−−−−−−−−−−−−−−┐
+╎ Service ╎  description   │    λ     │  description   ╎       Service        ╎
+╎ PokeAPI ╎ ╴╴╴╴╴╴╴╴╴╴╴╴╴╴ │ FastAPI  │ ╴╴╴╴╴╴╴╴╴╴╴╴╴╴ ╎ SakespeareTranslator ╎
+└−−−−−−−−−┘                └──────────┘                └−−−−−−−−−−−−−−−−−−−−−−┘
+                             │
+                             │ Lookup
+                             │ Cache
+                             ▼
+                           ┌──────────┐
+                           │ DynamoDB │
+                           │  Cache   │
+                           └──────────┘

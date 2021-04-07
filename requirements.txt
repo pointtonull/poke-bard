@@ -1,0 +1,6 @@
+python-dateutil
+ipython
+pytest
+pytest-stepwise
+pytest-watch
+uvicorn==0.12.2

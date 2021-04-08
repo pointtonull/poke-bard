@@ -3,4 +3,5 @@ ipython
 pytest
 pytest-stepwise
 pytest-watch
+pdbpp
 uvicorn==0.12.2

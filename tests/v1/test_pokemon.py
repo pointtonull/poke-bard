@@ -5,7 +5,8 @@ from main import APP
 client = TestClient(APP)
 
 
-def test_read_main():
-    response = client.get("/")
-    assert response.status_code == 200
-    assert "<title>OpenBard - ReDoc</title>" in response.text
+def test__get_pokemon_empty():
+    response = client.get("/pokemon")
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Not Found"

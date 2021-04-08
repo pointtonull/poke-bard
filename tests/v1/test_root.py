@@ -8,4 +8,4 @@ client = TestClient(APP)
 def test_read_main():
     response = client.get("/")
     assert response.status_code == 200
-    assert "<title>OpenBard - ReDoc</title>" in response.text
+    assert "<title>OpenBard - Swagger UI</title>" in response.text

@@ -20,7 +20,7 @@ APP.include_router(router)
 @APP.get("/")
 async def get_root():
     return responses.RedirectResponse(
-        f"{ROOT_PATH}/redoc", status_code=status.HTTP_301_MOVED_PERMANENTLY
+        f"{ROOT_PATH}/docs", status_code=status.HTTP_301_MOVED_PERMANENTLY
     )
 
 

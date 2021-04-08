@@ -5,6 +5,7 @@ TESTS = $(ROOT)/tests
 DEV_DEPS = $(VIRTUAL_ENV)
 REQUIREMENTS_DEV = $(realpath requirements.txt)
 REQUIREMENTS = ${SRC}/requirements.txt
+RECURSE=$(MAKE) --no-print-directory
 
 export PYTHONPATH=$(DEPS):$(SRC)
 
@@ -71,14 +72,13 @@ run: $(DEPS)  ## Runs server locally
 
 deps: $(DEPS) $(DEPS_DEV)  # Installs all required dependencies
 
-$(DEPS_DEV): $(REQUIREMENTS_DEV)
-	pip install -r ${REQUIREMENTS_DEV}
-	@touch $(DEPS_DEV)
-
 $(DEPS): $(REQUIREMENTS)
-	pip install -r $(REQUIREMENTS) -t $(DEPS)
+	pip install -r "$(REQUIREMENTS)" -t "$(DEPS)"
 	@touch $(DEPS)
 
+$(DEPS_DEV): $(REQUIREMENTS_DEV)
+	pip install -r $(REQUIREMENTS_DEV)
+	@touch $(DEPS_DEV)
 
 build: $(LAYER) $(PACKAGE) ## creates local artefact.zip
 
@@ -93,21 +93,22 @@ $(PACKAGE): $(SRC) $(LAYER)
 
 upload: .upload  ## pushes artefact to defined s3 path
 .upload: $(PACKAGE)
-	aws s3 cp --recursive --quiet '$(LOCAL_PATH)' $(S3_PATH)/$(VERSION)
+	aws s3 cp --recursive '$(LOCAL_PATH)' $(S3_PATH)/$(VERSION)
 	@touch .upload
 
 
 deploy: .deploy ## Deploy / Update CF and Code
 .deploy: upload $(CF_TEMPLATE)
-	make .deploy_cf_silent || make explain_cf
+	$(RECURSE) .deploy_cf_silent || $(RECURSE) explain_cf
 	@touch .deploy
+	@$(RECURSE) --no-print-directory list-outputs
 
 
 clean:  ## clean local artefacts
 	@echo "Cleaning all artefacts..."
-	@-rm -f .upload
-	@-rm -f .deploy
-	@-rm -f deps
+	-rm -f .upload
+	-rm -f .deploy
+	-rm -rf deps
 
 
 .deploy_cf_silent: validate_cf
@@ -176,8 +177,9 @@ debug_tdd: deps  ## debug tests on filesystem events
 	cd $(SRC)                                                                     \
 	&& ptw                                                                        \
 		--clear                                                                   \
-		--pdb                                                                     \
+		--wait                                                                    \
 		./                                                                        \
+		--pdb                                                                    \
 		$(TESTS)                                                                  \
 		--                                                                        \
 		--stepwise                                                                \

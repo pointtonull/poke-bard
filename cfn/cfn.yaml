@@ -1,0 +1,153 @@
+---
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  AWS CloudFormation Template for Serverless Fast API GIS application.
+
+Transform: AWS::Serverless-2016-10-31
+
+
+Parameters:
+
+  Env:
+    Description: Type of environment, dev[elopment], prod[uction].
+    Type: String
+    AllowedValues:
+      - dev
+      - prod
+    MinLength: 3
+
+  Project:
+    Description: Name of parent project.
+    Type: String
+    MinLength: 4
+
+  Service:
+    Description: Name of this service.
+    Type: String
+    MinLength: 6
+
+  Region:
+    Description: Region
+    Type: String
+    Default: eu-west-1
+    MinLength: 6
+
+  ArtefactsBucket:
+    Description: S3 bucket name for Lambda artefacts.
+    Type: String
+    MinLength: 8
+
+  FastAPILambdaVersion:
+    Description: Lambda code version in bucket.
+    Type: String
+    MinLength: 5
+
+
+Mappings:
+    dev:
+      Log:
+        Level: DEBUG
+      Api:
+        Stage: dev
+      DynamoConfig:
+        WriteCapacityUnits: 5
+        ReadCapacityUnits: 5
+    prod:
+      Log:
+        Level: INFO
+      Api:
+        Stage: v1
+      DynamoConfig:
+        WriteCapacityUnits: 50
+        ReadCapacityUnits: 50
+
+
+Resources:
+
+  FastAPILambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Description: >-
+        Handles queries from API Gateway.
+      CodeUri:
+        Bucket: !Ref ArtefactsBucket
+        Key: !Sub fastapi_sig_api/${FastAPILambdaVersion}/code.zip
+      Runtime: python3.8
+      Handler: main.lambda_handler
+      MemorySize: 128
+      Timeout: 300
+      Policies: AWSLambdaVPCAccessExecutionRole
+      Environment:
+        Variables:
+          DUMMY: "False"
+          ENVIRONMENT: !Ref Env
+          LOGLEVEL: !FindInMap [!Ref Env, Log, Level]
+          PROJECT: !Ref Project
+          REGION: !Ref Region
+          SERVICE: !Ref Service
+          VERSION: !Ref FastAPILambdaVersion
+          STAGE: !FindInMap [!Ref Env, Api, Stage]
+          CACHE_TABLE: !Ref CacheTable
+
+      Events:
+        RootResource:
+          Type: Api
+          Properties:
+            Path: /
+            Method: any
+            RestApiId: !Ref ApiV1ServerlessApi
+        ProxyResource:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: any
+            RestApiId: !Ref ApiV1ServerlessApi
+      Tags:
+        Environment: !Ref Env
+        Project:     !Ref Project
+
+  ApiV1ServerlessApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !FindInMap [!Ref Env, Api, Stage]
+      Cors:
+        AllowMethods: "'GET,POST,PUT,DELETE,OPTIONS'"
+        AllowHeaders: "'authorization,content-type'"
+        AllowOrigin: "'*'"
+        MaxAge: "'600'"
+      Tags:
+        Environment: !Ref Env
+        Project:     !Ref Project
+
+
+  CacheTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Join ['-', [!Ref Project, !Ref Env, cache]]
+      AttributeDefinitions:
+        - AttributeName: pokemon_id
+          AttributeType: S
+        - AttributeName: ttl
+          AttributeType: N
+      KeySchema:
+        - AttributeName: pokemon_id
+          KeyType: HASH
+      ProvisionedThroughput:
+        ReadCapacityUnits:   !FindInMap [!Ref Env, DynamoConfig, ReadCapacityUnits]
+        WriteCapacityUnits:  !FindInMap [!Ref Env, DynamoConfig, WriteCapacityUnits]
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      Tags:
+        - Key: Env
+          Value: !Ref Env
+        - Key: Project
+          Value: !Ref Project
+
+
+Outputs:
+  BARDURL:
+    Value: !Sub
+      - https://${ApiV1ServerlessApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}
+      - Stage: !FindInMap [!Ref Env, Api, Stage]

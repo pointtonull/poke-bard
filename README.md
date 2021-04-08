@@ -116,3 +116,7 @@ Creating a dockerfile for fastapi is trivial[template]. So, I decided to take
 it an step further and deploy it using a serverless architecture.
 
 https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
+
+# Cache
+
+Using a lookup table based on DynamoDB with TTL.

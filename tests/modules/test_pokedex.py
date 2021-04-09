@@ -11,7 +11,8 @@ CLEAN_DESCRIPTION_CASES = [
             "\fBy soaking up the sun’s rays, the seed..."
         ),
         "answer": (
-            "There is a seed on its back. By soaking up the sun’s rays, the seed..."
+            "There is a seed on its back. "
+            "By soaking up the sun’s rays, the seed..."
         ),
     },
     {

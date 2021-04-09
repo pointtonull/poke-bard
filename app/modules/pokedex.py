@@ -38,8 +38,10 @@ def get_pokemon_description(pokemon_id: str) -> str:
         pokemon = POKEDEX.get_pokemon_species(pokemon_id)
     except Exception as error:
         if error.status_code == 404:
-            raise PokemonNotFoundError(f"{pokemon_id} could not be found in national pokedex, "
-                                       "send a live specimen if this is a mistake.")
+            raise PokemonNotFoundError(
+                f"`{pokemon_id}` could not be found in national pokedex, send "
+                "a live specimen if this is a mistake."
+            )
         raise error
     description = max(
         (

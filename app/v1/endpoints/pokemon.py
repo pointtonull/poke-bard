@@ -1,9 +1,9 @@
 from enum import Enum
 from typing import Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 
-from modules.pokedex import get_pokemon_description
+from modules.pokedex import get_pokemon_description, PokemonNotFoundError
 
 ROUTER = APIRouter()
 
@@ -21,7 +21,11 @@ def get_pokemon(
     """
     Get Pokemon description, in proper bard style.
     """
-    description = get_pokemon_description(pokemon_id)
+    try:
+        description = get_pokemon_description(pokemon_id)
+    except PokemonNotFoundError as error:
+        raise HTTPException(status_code=404, detail=str(error))
+
     if output_format == OutputFormat.text:
         response = description
     elif output_format == OutputFormat.json:

@@ -1,7 +1,8 @@
-python-dateutil
 ipython
+pdbpp
 pytest
 pytest-stepwise
 pytest-watch
-pdbpp
+python-dateutil
+requests-mock
 uvicorn==0.12.2

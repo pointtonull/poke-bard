@@ -68,7 +68,7 @@ echo:  ## Print relevant variables
 
 run: $(DEPS)  ## Runs server locally
 	cd $(SRC);                                                                    \
-	uvicorn --reload main:app
+	uvicorn --reload main:APP
 
 deps: $(DEPS) $(DEPS_DEV)  # Installs all required dependencies
 
@@ -160,6 +160,7 @@ ipython: deps
 test: deps ## Run tests
 	cd $(SRC);                                                                    \
 	python -m pytest $(TESTS)
+
 
 tdd: deps ## run tests on filesystem events
 	cd $(SRC)                                                                     \

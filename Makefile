@@ -92,7 +92,7 @@ $(PACKAGE): $(SRC) $(LAYER)
 
 upload: .upload  ## pushes artefact to defined s3 path
 .upload: $(PACKAGE)
-	aws s3 cp --recursive '$(LOCAL_PATH)' $(S3_PATH)/$(VERSION)
+	aws s3 cp --recursive '$(PACKAGE)' '$(S3_PATH)/$(VERSION)/code.zip'
 	@touch .upload
 
 

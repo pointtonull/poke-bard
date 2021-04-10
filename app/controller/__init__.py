@@ -1,0 +1,2 @@
+from modules.pokedex import PokemonNotFoundError
+from .pokedex import get_pokemon_description_translated

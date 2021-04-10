@@ -68,16 +68,17 @@ Resources:
   FastAPILambda:
     Type: AWS::Serverless::Function
     Properties:
-      Description: >-
-        Handles queries from API Gateway.
       CodeUri:
         Bucket: !Ref ArtefactsBucket
         Key: !Sub fastapi_sig_api/${FastAPILambdaVersion}/code.zip
-      Runtime: python3.8
+      Description: >-
+        Handles queries from API Gateway.
       Handler: main.lambda_handler
       MemorySize: 128
-      Timeout: 300
       Policies: AWSLambdaVPCAccessExecutionRole
+      Role: !GetAtt LambdaRole.Arn
+      Runtime: python3.8
+      Timeout: 300
       Environment:
         Variables:
           DUMMY: "False"
@@ -89,7 +90,6 @@ Resources:
           VERSION: !Ref FastAPILambdaVersion
           STAGE: !FindInMap [!Ref Env, Api, Stage]
           CACHE_TABLE: !Ref CacheTable
-
       Events:
         RootResource:
           Type: Api

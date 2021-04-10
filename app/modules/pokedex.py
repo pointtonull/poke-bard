@@ -44,7 +44,6 @@ def get_pokemon_description(pokemon_id: str) -> str:
                 f"`{pokemon_id}` could not be found in national pokedex, send "
                 "a live specimen if this is a mistake."
             )
-        raise error
     description = max(
         (
             entry.flavor_text

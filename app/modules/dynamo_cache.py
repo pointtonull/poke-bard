@@ -16,6 +16,9 @@ logger = logging.getLogger(__name__)
 
 
 def format_dynamo_record(raw_record):
+    """
+    Recursive cleaning for free hand structures.
+    """
     record = copy(raw_record)
     if isinstance(record, str):  # field can't be an empty string
         if record == "":
@@ -66,6 +69,10 @@ def _hash_kwargs(kwargs):
 
 
 def make_hasheable(args, kwargs):
+    """
+    Not all Python objects are good candidates for table keys.
+    This ensures the hash of the object is stable.
+    """
     hasheable_args = _hash_args(args)
     hasheable_kwargs = _hash_kwargs(kwargs)
     return str((hasheable_args, hasheable_kwargs))
@@ -73,6 +80,9 @@ def make_hasheable(args, kwargs):
 
 class Cache:
     def __init__(self, *, table_name=None, ttl=3600, dummy=False):
+        """
+        Simple cache that uses in-memory and dynamodb as persisntence layers.
+        """
         self.ttl = ttl
         self.table = boto3.resource("dynamodb").Table(table_name)
         self.dummy = dummy

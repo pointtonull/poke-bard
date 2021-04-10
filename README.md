@@ -85,7 +85,28 @@ infrastructure has many benefits:
 
 ## Development Environment Setup
 
-### Environment variables
+### Install Python
+
+
+
+### Set Python Environment
+
+Install [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html),
+or any other environment manager.
+
+TL;DR:
+```
+pip install virtualenvwrapper
+echo -e '\n# Set the WORKON_HOME variable for virtualenvwrapper \nexport WORKON_HOME="~/.virtualenvs"' >> ~/.bash_profile && echo -e '\n# Source the virtualenvwrapper shell script to be able to run commands \nsource /usr/local/bin/virtualenvwrapper.sh' >> ~/.bash_profile && source ~/.bash_profile
+```
+
+Create a development environment:
+
+```
+mkvirtualenv poke-bard
+```
+
+### Set Environment variables
 
 If you try to run any target, make will complain asking your to `source .env`.
 This is my development environment file.
@@ -102,9 +123,16 @@ is to ready the creation of CD/CI pipelines.
 
 I have experience using this approach with Jenkins, Gitlab, and CircleCI.
 
-### Python Environment
+### Test Code
 
-Install [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html)
+If all is setup you should be able to run the tests.
+
+```
+make coverage
+```
+
+It will take longer the first time since it has to install dependencies, but it
+should be faster from now on.
 
 # Dockerfile
 

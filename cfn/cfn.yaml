@@ -2,7 +2,7 @@
 
 AWSTemplateFormatVersion: '2010-09-09'
 Description: >-
-  AWS CloudFormation Template for Serverless Fast API GIS application.
+  AWS CloudFormation Template for Serverless FastAPI with DynamoDB Cache.
 
 Transform: AWS::Serverless-2016-10-31
 
@@ -126,12 +126,10 @@ Resources:
     Properties:
       TableName: !Join ['-', [!Ref Project, !Ref Env, cache]]
       AttributeDefinitions:
-        - AttributeName: pokemon_id
+        - AttributeName: key
           AttributeType: S
-        - AttributeName: ttl
-          AttributeType: N
       KeySchema:
-        - AttributeName: pokemon_id
+        - AttributeName: key
           KeyType: HASH
       ProvisionedThroughput:
         ReadCapacityUnits:   !FindInMap [!Ref Env, DynamoConfig, ReadCapacityUnits]

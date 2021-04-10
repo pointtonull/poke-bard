@@ -15,7 +15,13 @@ ROOT_PATH = f"/{STAGE}" if LAMBDA else ""
 
 APP = FastAPI(
     title="OpenBard",
-    description="API Service that provides Shakespearean versions of pokemons' descriptions.",
+    description=(
+        "API Service that provides Shakespearean versions of pokemons' descriptions.\n\n"
+        "If there are several descriptions available (from multiple sources), "
+        "it'll use the longest available description. "
+        "I am well aware of incosistencies in `sword` and `diamond` with cherries and HP; "
+        "but this pokedex is just for fun. "
+    ),
     root_path=ROOT_PATH,
     debug=DEBUG,
 )

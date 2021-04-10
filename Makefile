@@ -7,6 +7,7 @@ REQUIREMENTS_DEV = $(realpath requirements.txt)
 REQUIREMENTS = ${SRC}/requirements.txt
 RECURSE=$(MAKE) --no-print-directory
 PYTHON=PYTHONPATH=$(DEPS):$(SRC) python
+CF_TEMPLATE = cfn/cfn.yaml
 
 PROJECT = pokebard
 SERVICE = FastAPI_PoC
@@ -48,8 +49,10 @@ help:  ## Show this help.
 		}' $(MAKEFILE_LIST)
 
 echo:  ## Print relevant variables
+	@echo CF_TEMPLATE = $(CF_TEMPLATE)
 	@echo DEPS = $(DEPS)
 	@echo DEPS_DEV = $(DEPS_DEV)
+	@echo LAYER = $(LAYER)
 	@echo LOCAL_PATH = $(LOCAL_PATH)
 	@echo PACKAGE = $(PACKAGE)
 	@echo PROJECT = $(PROJECT)
@@ -60,7 +63,6 @@ echo:  ## Print relevant variables
 	@echo S3_PATH = $(S3_PATH)
 	@echo SRC = $(SRC)
 	@echo STACK_NAME = $(STACK_NAME)
-	@echo LAYER = $(LAYER)
 	@echo STAGE = $(STAGE)
 	@echo VERSION = $(VERSION)
 
@@ -93,6 +95,7 @@ $(PACKAGE): $(SRC) $(LAYER)
 upload: .upload  ## pushes artefact to defined s3 path
 .upload: $(PACKAGE)
 	aws s3 cp '$(PACKAGE)' '$(S3_PATH)/$(VERSION)/code.zip'
+	aws s3 cp '$(CF_TEMPLATE)' '$(S3_PATH)/$(VERSION)/cfn.yaml'
 	@touch .upload
 
 
@@ -121,7 +124,7 @@ clean:  ## clean local artefacts
 				Project=$(PROJECT)                              \
 				Service=$(SERVICE)                              \
 		--stack-name "$(STACK_NAME)"                                    \
-		--template-file cfn/cfn.yaml
+		--template-file $(CF_TEMPLATE)
 	@echo "\n\033[1mApplication resources:\033[0m"
 	@echo "https://$(AWS_REGION).console.aws.amazon.com/lambda/home?region=$(AWS_REGION)#/applications/$(STACK_NAME)\n"
 

@@ -20,7 +20,12 @@ def get_pokemon_description(
 ):
     """
     Get Pokemon description, in proper bard style.
+
+    It can be a pokemon name, or it's order id in National Pokedex.
+
+    The name is case insensitive.
     """
+    pokemon_id = pokemon_id.lower()
     try:
         description = controller.get_pokemon_description_translated(pokemon_id)
     except controller.PokemonNotFoundError as error:

@@ -3,7 +3,7 @@ from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 
-from modules.pokedex import get_pokemon_description, PokemonNotFoundError
+import controller
 
 ROUTER = APIRouter()
 

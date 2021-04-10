@@ -2,6 +2,8 @@ import re
 
 import pokepy
 
+from . import shakespeare
+
 POKEDEX = pokepy.V2Client()
 TRANSFORMS = [
     (re.compile(r"\n"), r" "),

@@ -6,9 +6,9 @@ You can access the interactive documentation using Swagger UI at:
 
 https://8qumbw8k6h.execute-api.eu-west-1.amazonaws.com/dev
 
-Using the API you can test queries using the browser.
+Using this interface you can explore the documentation, and run example queries.
 
-The API is deployed in AWS.
+![swagger ui](doc/swagger_ui.png "Swagger UI in a mobile device screen.")
 
 ### Example
 

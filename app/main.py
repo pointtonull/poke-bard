@@ -1,7 +1,10 @@
 import os
+
 from fastapi import FastAPI, responses, status
-from v1.routers import router
 from mangum import Mangum
+
+from v1.routers import router
+
 
 STAGE = os.environ.get("STAGE", "dev")
 LAMBDA = "AWS_LAMBDA_FUNCTION_VERSION" in os.environ

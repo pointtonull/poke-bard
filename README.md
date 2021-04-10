@@ -1,62 +1,59 @@
 # Poke-Bard
 
-![pipeline diagram](doc/pipeline.png "Pipeline Diagram")
 
-API Requirements
-
-- Retrieve Shakespearean description:
-
-`GET endpoint: /pokemon/<pokemon name>`
+The API is deployed in AWS.
 
 Usage example (using httpie):
 
-`http http://localhost:5000/pokemon/charizard`
+`http https://8qumbw8k6h.execute-api.eu-west-1.amazonaws.com/dev/pokemon/charizard`
 
 Output format:
 
 ``` json
 {
     "name": "charizard",
-    "description": "Charizard flies 'round the sky in search of powerful
-    opponents. 't breathes fire of such most wondrous heat yond 't melts aught.
-    However, 't nev'r turns its fiery breath on any opponent weaker than itself."
+    "description": "Charizard flies 'round the sky in search of powerful opponents. 't breathes fire of such most wondrous heat yond 't melts aught. However, 't nev'r turns its fiery breath on any opponent weaker than itself."
 }
 ```
 
-Guidelines:
-- Feel free to use any programming language, framework and library you want;
-- Make it concise, readable and correct;
-- Write automated tests for it!
-- The task itself is trivial to keep it contained - we are interested to see how you work and
-structure a project. Imagine this was a production feature;
-- Useful APIs:
-    - Shakespeare translator: https://funtranslations.com/api/shakespeare
-    - PokéAPI: https://pokeapi.co/
+### OpenAPI
 
-Please describe in README.md:
-- How to run it (don't assume anything already installed)
-- Any areas you’re not happy with, and what improvements you’d make given more time
+You can access the interactive documentation using Swagger UI at:
 
-Bonus points for:
-- Dockerfile;
-- Include your Git history.
+https://8qumbw8k6h.execute-api.eu-west-1.amazonaws.com/dev
 
-Have fun, take your time and when you are done please send a link to your
-public Github repo to the talent partner you are in contact with.
+Using the API you can test queries using the browser.
 
-Serverless using FastAPI / Magnum / Lambda and API Gateway.
+## Design and implementation
+
+It is a Serverless API using FastAPI/Magnum on top of AWS' Lambda, DynamoDB,
+and API Gateway.
+
+![pipeline diagram](doc/pipeline.png "Pipeline Diagram")
+
+## Development tools
 
 The included Makefile abstracts the common development, testing, packaging, and
-deploying steps.
+deploying steps:
 
-- Builds the compiled zip artefact.  Upload zip artefact to S3.  Deploys lambda
-- pointing to this source code.
+- Includes `help` target (default) with usage information.
+- Verifies dev environment for missing configuration.
+- Builds the compiled zip artefact. Upload zip artefact to S3. Deploys.
+- Builds and deployment artefacts are kept in S3 for archive and rollback.
+- `tdd`, `debug`, `run`, `test`, `coverage`: and more, to help debugging, and
+  integration with CI/CD pipelines.
+- `docker-build`, and `docker-run`: to build and/or run dockerized.
 
-It's ready to split the dependencies into layers, but I find it an unnecessary
-complexity for this project.
+## Architecture
+
+It's uploading the "compiled" code to S3 instead of directly as a Lambda
+Function to allow flexibility, and it is ready to split the dependencies into
+layers, but I find it an unnecessary complexity for this project.
 
 Using SAM to keep it simple. It has the same capabilities as full-fledged
 CloudFormation, but it's better suited for Serverless applications.
+The CloudFormation Template includes custom policies to keep it with minimal
+privileges required to run.
 
 FastAPI is a very fast and elegant API Framework that offers OpenAPI
 documentation, and good parallel processing support.
@@ -67,50 +64,42 @@ running inside of AWS Lambda and API Gateway. It provides an adapter, which:
 - routes requests made to the API Gateway to our Lambda function
 - routes Lambda function responses back to the API Gateway
 
-# Why is this architecture attractive?
+It is logging to CloudWatch, and reporting metrics to Datadog.
 
-It provides a completely serverless API infrastructure with many benefits:
+### Why is this architecture attractive?
 
-All advantages of Python and the amazing FastAPI library combined with the
-benefits of a serverless architecture scalability & no backend server to manage
-— API Gateway will spin up as many Lambda functions as needed to handle all
-requests made to our API very cost-effective, especially for smaller APIs that
-may not yet get millions of requests performant: due to Lambda’s context reuse,
-consecutive requests (within 15 minutes from a previous request) reuse the
-frozen execution context, allowing to mitigate the cold start of a serverless
-function if enabled, API Gateway caching allows further latency improvements
-easy management of API keys API Gateway provides integration with Active
-Directories and third-party auth providers such as “Login with Google/Amazon
-account” via Cognito out of the box centralized logging of all API requests and
-responses, as well as access logs via CloudWatch distributed tracing capability
-by enabling X-Ray traces.
+For an API of very sporadic use, having a completely serverless API
+infrastructure has many benefits:
+
+- no upfront cost (it'll serve 1 million invocations per month for free)
+- unlimited scalability (lambda functions and dynamodb, can scale up quickly)
+- standard OpenAPI interactive documentation for free (as long as the code is
+  well formatted)
+- if required API Gateway caching can be enabled
+- authentication, and authorization is trivial using Cognito (and allows third
+  party auth providers like Google or Facebook)
 
 
-With the free tier, you get monthly (free) access to:
 
-1 million API Gateway requests 1 million Lambda invocations with up to 3.2
-million seconds of compute time per month
 
-Apart from that, the prices may vary depending on your AWS region and your
-number of requests (bulk discount), but they are in ranges of 1–4.25 dollars
-per one million requests (at the time of writing). Lambda is priced based on
-the number of invocations and how long your code is running, measured in
-milliseconds. You can find out more here and here.
+## Development Environment Setup
 
-# OpenAPI
+### Environment variables
 
-https://beecd8ws3g.execute-api.eu-west-1.amazonaws.com/dev/docs
-
-# Environment variables
+If you try to run any target, make will complain asking your to `source .env`.
+This is my development environment file.
 
 ``` sh
 export STAGE="dev"
-export ARTEFACTS_BUCKET="shakespearean-apis"
+export ARTEFACTS_BUCKET="bard-apis"
+export CACHE_TABLE="pokebard-dev-cache"
+export DUMMY="true"
 ```
 
-It'll use the longest available description. I am well aware of incosistencies
-in `sword` and `diamond` with cherries and HP; but this pokedex is just for
-fun.
+The purpose of allowing environment variables to define the scripts' behavior
+is to ready the creation of CD/CI pipelines.
+
+I have experience using this approach with Jenkins, Gitlab, and CircleCI.
 
 # Dockerfile
 

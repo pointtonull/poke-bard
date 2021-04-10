@@ -27,5 +27,5 @@ def test__GET_pokemon__bulbasaur(mock_network):
     assert response.status_code == 200
     assert response.json()["description"] == (
         "Thither is a seed on its back. By soaking up the travelling lamp’s "
-        "rays,  the seed."
+        "rays, the seed."
     )

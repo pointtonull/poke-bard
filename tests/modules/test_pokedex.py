@@ -23,6 +23,14 @@ CLEAN_DESCRIPTION_CASES = [
     },
     {
         "original_description": (
+            "BULBASAUR can be seen napping  in bright sunlight."
+        ),
+        "answer": (
+            "BULBASAUR can be seen napping in bright sunlight."
+        ),
+    },
+    {
+        "original_description": (
             "BULBASAUR can be seen napping in"
             "\nbright sunlight."
             "\nThere is a seed on its back."

@@ -24,6 +24,7 @@ https://8qumbw8k6h.execute-api.eu-west-1.amazonaws.com/dev
 
 Using the API you can test queries using the browser.
 
+
 ## Design and implementation
 
 It is a Serverless API using FastAPI/Magnum on top of AWS' Lambda, DynamoDB,
@@ -100,6 +101,10 @@ The purpose of allowing environment variables to define the scripts' behavior
 is to ready the creation of CD/CI pipelines.
 
 I have experience using this approach with Jenkins, Gitlab, and CircleCI.
+
+### Python Environment
+
+Install [virtualenvwrapper](https://virtualenvwrapper.readthedocs.io/en/latest/install.html)
 
 # Dockerfile
 

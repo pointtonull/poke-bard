@@ -41,11 +41,11 @@ endif
 help:  ## Show this help.
 	@awk -F ":.*?## " '                                                     \
 	  /^[a-zA-Z_-]+:/&&NF==2{                                               \
-	      printf "\033[36m%-10s\033[0m %s\n", $$1, $$2 | "sort"             \
+	      printf "\033[36m%-15s\033[0m %s\n", $$1, $$2 | "sort"             \
 	  }                                                                     \
 	  /^[a-zA-Z_-]+:/&&NF==1{                                               \
 	      split($$1, a, ":");                                               \
-	      printf "\033[36m%-10s\033[0m %s\n", a[1], "--" | "sort"           \
+	      printf "\033[36m%-15s\033[0m %s\n", a[1], "--" | "sort"           \
 	  }' $(MAKEFILE_LIST)
 
 echo:  ## Print relevant variables

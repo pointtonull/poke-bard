@@ -4,7 +4,7 @@ SRC = $(ROOT)/app
 TESTS = $(ROOT)/tests
 DEPS_DEV = $(VIRTUAL_ENV)
 REQUIREMENTS_DEV = $(realpath requirements.txt)
-REQUIREMENTS = ${SRC}/requirements.txt
+REQUIREMENTS = $(SRC)/requirements.txt
 RECURSE=$(MAKE) --no-print-directory
 PYTHON=PYTHONPATH=$(DEPS):$(SRC) python
 CF_TEMPLATE = cfn/cfn.yaml
@@ -18,7 +18,7 @@ AWS_PROFILE ?= default
 AWS_REGION ?= eu-west-2
 S3_BUCKET := $(ARTEFACTS_BUCKET)
 S3_KEY := fastapi_sig_api
-S3_PATH := s3://${S3_BUCKET}/${S3_KEY}
+S3_PATH := s3://$(S3_BUCKET)/$(S3_KEY)
 
 VERSION := $(shell git describe --always |awk -F"[-.]" '                        \
 	NF<2{print "0.0.1"} 2<NF{print $$1 "." $$2 "." $$3 + $$4}')
@@ -40,13 +40,13 @@ endif
 
 help:  ## Show this help.
 	@awk -F ":.*?## " '                                                     \
-		/^[a-zA-Z_-]+:/&&NF==2{                                         \
-			printf "\033[36m%-10s\033[0m %s\n", $$1, $$2 | "sort"   \
-		}                                                               \
-		/^[a-zA-Z_-]+:/&&NF==1{                                         \
-			split($$1, a, ":");                                     \
-			printf "\033[36m%-10s\033[0m %s\n", a[1], "--" | "sort" \
-		}' $(MAKEFILE_LIST)
+	  /^[a-zA-Z_-]+:/&&NF==2{                                               \
+	      printf "\033[36m%-10s\033[0m %s\n", $$1, $$2 | "sort"             \
+	  }                                                                     \
+	  /^[a-zA-Z_-]+:/&&NF==1{                                               \
+	      split($$1, a, ":");                                               \
+	      printf "\033[36m%-10s\033[0m %s\n", a[1], "--" | "sort"           \
+	  }' $(MAKEFILE_LIST)
 
 echo:  ## Print relevant variables
 	@echo CF_TEMPLATE = $(CF_TEMPLATE)
@@ -68,7 +68,7 @@ echo:  ## Print relevant variables
 
 
 run: $(DEPS)  ## Runs server locally
-	cd $(SRC) &&                                                           \
+	cd $(SRC) &&                                                            \
 	$(PYTHON) -m uvicorn --reload main:APP
 
 deps: $(DEPS) $(DEPS_DEV)  ## Installs all required dependencies
@@ -115,30 +115,30 @@ clean:  ## clean local artefacts
 
 .deploy_cf_silent: validate_cf
 	aws cloudformation deploy                                               \
-		--capabilities CAPABILITY_IAM                                   \
-		--no-fail-on-empty-changeset                                    \
-		--parameter-overrides                                           \
-				Env=$(STAGE)                                    \
-				ArtefactsBucket=$(ARTEFACTS_BUCKET)             \
-				FastAPILambdaVersion=$(VERSION)                 \
-				Project=$(PROJECT)                              \
-				Service=$(SERVICE)                              \
-		--stack-name "$(STACK_NAME)"                                    \
-		--template-file $(CF_TEMPLATE)
+	  --capabilities CAPABILITY_IAM                                         \
+	  --no-fail-on-empty-changeset                                          \
+	  --parameter-overrides                                                 \
+	      Env=$(STAGE)                                                      \
+	      ArtefactsBucket=$(ARTEFACTS_BUCKET)                               \
+	      FastAPILambdaVersion=$(VERSION)                                   \
+	      Project=$(PROJECT)                                                \
+	      Service=$(SERVICE)                                                \
+	  --stack-name "$(STACK_NAME)"                                          \
+	  --template-file $(CF_TEMPLATE)
 	@echo "\n\033[1mApplication resources:\033[0m"
 	@echo "https://$(AWS_REGION).console.aws.amazon.com/lambda/home?region=$(AWS_REGION)#/applications/$(STACK_NAME)\n"
 
 validate_cf:  ## Quick unexpensive verification of CF format
 	@aws cloudformation validate-template                                   \
-		--template-body file://cfn/cfn.yaml | jq -C .
+	  --template-body file://cfn/cfn.yaml | jq -C .
 
 delete:  ## Deletes CF Stack
 	@aws cloudformation delete-stack                                        \
-		--stack-name "$(STACK_NAME)"
+	  --stack-name "$(STACK_NAME)"
 
 explain_cf: $(DEPS_DEV)  ## History of changes on CloudFormation Stack
 	@aws cloudformation describe-stack-events                               \
-		--stack-name "$(STACK_NAME)" > .cf.messages
+	  --stack-name "$(STACK_NAME)" > .cf.messages
 	@python .cf_status.py | ccze -A
 
 graph: doc/pipeline.png doc/pipeline.txt ## Creates diagraph using relationships definition
@@ -150,9 +150,9 @@ doc/pipeline.txt: doc/pipeline.dot
 
 list-outputs:  ## List stack outputs
 	@aws cloudformation describe-stacks                                     \
-		--stack-name "$(STACK_NAME)"                                    \
-		--query "Stacks[].Outputs"                                      \
-		--output text
+	  --stack-name "$(STACK_NAME)"                                          \
+	  --query "Stacks[].Outputs"                                            \
+	  --output text
 
 ipython: deps  ## Opens a rich python prompt in app's enviroment
 	cd $(SRC);                                                              \
@@ -166,27 +166,27 @@ test: deps ## Run tests
 
 tdd: deps ## Run tests, watches on filesystem events
 	cd $(SRC)                                                               \
-	&& $(PYTHON) -m pytest_watch \
-		--clear                                                         \
-		./                                                              \
-		$(TESTS)                                                        \
-		--                                                              \
-		--stepwise                                                      \
-		--disable-warnings                                              \
-		$(TESTS)
+	&& $(PYTHON) -m pytest_watch                                            \
+	  --clear                                                               \
+	  ./                                                                    \
+	  $(TESTS)                                                              \
+	  --                                                                    \
+	  --stepwise                                                            \
+	  --disable-warnings                                                    \
+	  $(TESTS)
 
 
 debug_tdd: deps  ## Debug tests, watches on filesystem events
 	cd $(SRC)                                                               \
-	&& $(PYTHON) -m pytest_watch \
-		--clear                                                         \
-		--pdb                                                           \
-		./                                                              \
-		$(TESTS)                                                        \
-		--                                                              \
-		--stepwise                                                      \
-		--disable-warnings                                              \
-		$(TESTS)
+	&& $(PYTHON) -m pytest_watch                                            \
+	  --clear                                                               \
+	  --pdb                                                                 \
+	  ./                                                                    \
+	  $(TESTS)                                                              \
+	  --                                                                    \
+	  --stepwise                                                            \
+	  --disable-warnings                                                    \
+	  $(TESTS)
 
 
 debug: deps  ## Debug tests
@@ -197,10 +197,10 @@ debug: deps  ## Debug tests
 coverage: deps  ## Run tests and report coverage
 	cd $(SRC)                                                               \
 	&& $(PYTHON) -m pytest                                                  \
-		-v --doctest-modules ./                                         \
-		--cov=./ --cov-report=term-missing                              \
-		--ignore=$(DEPS)                                                \
-		$(TESTS)
+	  -v --doctest-modules ./                                               \
+	  --cov=./ --cov-report=term-missing                                    \
+	  --ignore=$(DEPS)                                                      \
+	  $(TESTS)
 
 
 docker-build: .docker-build  ## Builds docker image

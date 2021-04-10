@@ -54,8 +54,5 @@ def get_pokemon_description(pokemon_id: str) -> str:
         key=len,
     )
     description = _clean_description(description)
-    return description
-
-
-def get_shakesperean_description(pokemon_id: str) -> str:
-    ...
+    name = pokemon.name
+    return name, description

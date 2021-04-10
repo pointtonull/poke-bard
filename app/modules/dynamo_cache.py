@@ -5,8 +5,9 @@ from decimal import Decimal
 from functools import wraps, lru_cache
 from time import time
 import hashlib
-import os
+import json
 import logging
+import os
 
 from doglessdata import DataDogMetrics
 import boto3
@@ -96,13 +97,16 @@ class Cache:
         item = response.get("Item")
         if item:
             metrics.increment("cache_hit")
-            return item["value"]
+            value = item["Value"]
+            value = json.loads(value)
+            return value
         else:
             metrics.increment("cache_miss")
             raise KeyError("Item not found")
 
     @metrics.timeit
     def put(self, key, value):
+        value = json.dumps(value)
         if self.dummy:
             logger.debug("Dummy put")
             return False

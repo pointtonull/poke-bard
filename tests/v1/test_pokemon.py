@@ -21,6 +21,7 @@ def test__GET_pokemon__not_a_pokemon(mock_network):
         "live specimen if this is a mistake."
     )
 
+
 def test__GET_pokemon__bulbasaur(mock_network):
     response = client.get("/pokemon/bulbasaur")
 
@@ -29,3 +30,15 @@ def test__GET_pokemon__bulbasaur(mock_network):
         "Thither is a seed on its back. By soaking up the travelling lamp’s "
         "rays, the seed."
     )
+    assert response.json()["name"] == "bulbasaur"
+
+
+def test__GET_pokemon__charizard(mock_network):
+    response = client.get("/pokemon/charizard")
+
+    assert response.status_code == 200
+    assert response.json()["description"] == (
+        "Charizard flies around the sky in search of powerful opponents. "
+        "It breathes fire of such most heat it mealt stone."
+    )
+    assert response.json()["name"] == "charizard"

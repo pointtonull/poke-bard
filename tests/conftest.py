@@ -5,11 +5,13 @@ import urllib
 from pytest import fixture
 
 SHAKESPEAREAN_TRANSLATION_CASES = {
-    "There is a seed on its back. By soaking up the sun’s rays, the seed...": "Thither is a seed on its back. By soaking up the travelling lamp’s rays,  the seed.",
+    "There is a seed on its back. By soaking up the sun’s rays, the seed...": "Thither is a seed on its back. By soaking up the travelling lamp’s rays, the seed.",
     "BULBASAUR can be seen napping in bright sunlight.": "Bulbasaur can beest seen napping in bright sunlight.",
+    "Charizard flies around the sky in search of powerful opponents. 't breathes fire of such most wondrous heat yond 't melts aught.": "Charizard flies around the sky in search of powerful opponents. It breathes fire of such most heat it mealt stone.",
 }
 
 POKE_API_1 = {
+    "name": "bulbasaur",
     "flavor_text_entries": [
         {
             "flavor_text": (
@@ -20,6 +22,26 @@ POKE_API_1 = {
         },
         {
             "flavor_text": "It can go for days\nwithout eating.",
+            "language": {"name": "en"},
+        },
+    ]
+}
+
+
+POKE_API_CHARIZARD = {
+    "name": "charizard",
+    "flavor_text_entries": [
+        {
+            "flavor_text": (
+                "Charizard flies around the sky in search of powerful opponents. "
+                "'t breathes fire of such most wondrous heat yond 't melts aught."
+            ),
+            "language": {"name": "en"},
+        },
+        {
+            "flavor_text": (
+                "Charizard flies around the sky in search of powerful opponents."
+            ),
             "language": {"name": "en"},
         },
     ]
@@ -54,6 +76,10 @@ def mock_network(requests_mock):
     requests_mock.get(
         "https://pokeapi.co/api/v2/pokemon-species/1",
         text=json.dumps(POKE_API_1),
+    )
+    requests_mock.get(
+        "https://pokeapi.co/api/v2/pokemon-species/charizard",
+        text=json.dumps(POKE_API_CHARIZARD),
     )
     requests_mock.get(
         "https://pokeapi.co/api/v2/pokemon-species/bulbasaur",

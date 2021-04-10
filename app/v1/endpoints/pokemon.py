@@ -14,6 +14,9 @@ class OutputFormat(str, Enum):
     text = "text"
     json = "json"
 
+class PokemonDescription(Enum):
+    name: str
+    description: str
 
 metrics = DataDogMetrics(global_tags=["api"])
 logger = logging.getLogger(__name__)
@@ -23,7 +26,7 @@ logger = logging.getLogger(__name__)
 @ROUTER.get("/pokemon/{pokemon_id}")
 async def get_pokemon_description(
     pokemon_id: str, output_format: Optional[OutputFormat] = OutputFormat.json
-):
+) -> PokemonDescription:
     """
     Get Pokemon description, in proper bard style.
 
@@ -33,17 +36,18 @@ async def get_pokemon_description(
     """
     pokemon_id = pokemon_id.lower()
     try:
-        description = controller.get_pokemon_description_translated(pokemon_id)
+        name, description = controller.get_pokemon_description_translated(pokemon_id)
     except controller.PokemonNotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error))
 
     if output_format == OutputFormat.text:
-        response = description
+        response = f"{name}: {description}"
     elif output_format == OutputFormat.json:
         response = {
+            "name": name,
             "description": description,
         }
     else:
-        raise RuntimeError("Unsupported output format")
+        raise HTTPException(status_code=406, detail="Unsupported output format")
     return response
 

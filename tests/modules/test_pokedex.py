@@ -63,12 +63,16 @@ def test__clean_description__cases(clean_description_case):
 def test_get_pokemon_description__success(mock_network):
     result = pokedex.get_pokemon_description("1")
 
-    assert result == "There is a seed on its back. By soaking up the sun’s rays, the seed..."
+    name, description = result
+    assert name == "bulbasaur"
+    assert description == "There is a seed on its back. By soaking up the sun’s rays, the seed..."
     assert mock_network.call_count == 1
 
     result = pokedex.get_pokemon_description("bulbasaur")
 
-    assert result == "There is a seed on its back. By soaking up the sun’s rays, the seed..."
+    name, description = result
+    assert name == "bulbasaur"
+    assert description == "There is a seed on its back. By soaking up the sun’s rays, the seed..."
     assert mock_network.call_count == 2
 
 

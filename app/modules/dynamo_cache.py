@@ -75,7 +75,6 @@ class Cache:
     def __init__(self, *, table_name=None, ttl=3600, dummy=False):
         self.ttl = ttl
         self.table = boto3.resource("dynamodb").Table(table_name)
-        self.writer = self.table.batch_writer()
         self.dummy = dummy
 
     @metrics.timeit
@@ -104,7 +103,7 @@ class Cache:
             "ttl": ttl,
         }
         item = format_dynamo_record(item)
-        return self.writer.put_item(Item=item)
+        return self.table.put_item(Item=item)
 
     @lru_cache()
     def __call__(self, function):

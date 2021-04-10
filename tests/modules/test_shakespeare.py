@@ -29,4 +29,4 @@ def test__shakesperean_translation__cases(
 
     result = shakespeare.get_shakesperean_translation(original_description)
 
-    assert mock_network.call_count == 1
+    assert mock_network.call_count == 2

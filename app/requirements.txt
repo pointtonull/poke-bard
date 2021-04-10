@@ -1,6 +1,6 @@
 fastapi==0.61.1
 mangum==0.10.0
 requests==2.24.0
-pokepy
+pokepy==0.6.1
 git+https://github.com/pointtonull/doglessdata.git#egg=doglessdata
-boto3
+boto3==1.17.49

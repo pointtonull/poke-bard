@@ -144,6 +144,45 @@ Resources:
           Value: !Ref Project
 
 
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      Path: /
+      Policies:
+      - PolicyName: logs
+        PolicyDocument:
+          Statement:
+          - Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            Effect: Allow
+            Resource: 'arn:aws:logs:*:*:*'
+      - PolicyName: dynamodb
+        PolicyDocument:
+          Statement:
+          - Action:
+            - dynamodb:ListTables
+            - dynamodb:DescribeTable
+            Effect:   Allow
+            Resource: '*'
+      - PolicyName: cache-table
+        PolicyDocument:
+          Statement:
+          - Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            Effect: Allow
+            Resource: !GetAtt CacheTable.Arn
+
 Outputs:
   BARDURL:
     Value: !Sub

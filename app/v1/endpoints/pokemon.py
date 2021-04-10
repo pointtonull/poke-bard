@@ -1,7 +1,9 @@
 from enum import Enum
 from typing import Optional
+import logging
 
 from fastapi import APIRouter, HTTPException
+from doglessdata import DataDogMetrics
 
 import controller
 
@@ -13,7 +15,11 @@ class OutputFormat(str, Enum):
     json = "json"
 
 
+metrics = DataDogMetrics(global_tags=["api"])
+logger = logging.getLogger(__name__)
 
+
+@metrics.timeit
 @ROUTER.get("/pokemon/{pokemon_id}")
 def get_pokemon_description(
     pokemon_id: str, output_format: Optional[OutputFormat] = OutputFormat.json

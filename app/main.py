@@ -1,5 +1,7 @@
 import os
+import logging
 
+from doglessdata import DataDogMetrics
 from fastapi import FastAPI, responses, status
 from mangum import Mangum
 
@@ -19,7 +21,11 @@ APP = FastAPI(
 )
 APP.include_router(router)
 
+metrics = DataDogMetrics(global_tags=["api"])
+logger = logging.getLogger(__name__)
 
+
+@metrics.timeit
 @APP.get("/")
 async def get_root():
     return responses.RedirectResponse(

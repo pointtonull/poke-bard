@@ -75,7 +75,7 @@ class Cache:
     def __init__(self, *, table_name=None, ttl=3600, dummy=False):
         self.ttl = ttl
         self.table = boto3.resource("dynamodb").Table(table_name)
-        self.writter = self.table.batch_writer()
+        self.writer = self.table.batch_writer()
         self.dummy = dummy
 
     @metrics.timeit

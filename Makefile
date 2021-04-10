@@ -69,7 +69,7 @@ run: $(DEPS)  ## Runs server locally
 	cd $(SRC) &&                                                           \
 	$(PYTHON) -m uvicorn --reload main:APP
 
-deps: $(DEPS) $(DEPS_DEV)  # Installs all required dependencies
+deps: $(DEPS) $(DEPS_DEV)  ## Installs all required dependencies
 
 $(DEPS): $(REQUIREMENTS)
 	pip install -r "$(REQUIREMENTS)" -t "$(DEPS)"
@@ -133,7 +133,7 @@ delete:  ## Deletes CF Stack
 	@aws cloudformation delete-stack                                        \
 		--stack-name "$(STACK_NAME)"
 
-explain_cf: $(DEPS_DEV)
+explain_cf: $(DEPS_DEV)  ## History of changes on CloudFormation Stack
 	@aws cloudformation describe-stack-events                               \
 		--stack-name "$(STACK_NAME)" > .cf.messages
 	@python .cf_status.py | ccze -A
@@ -151,7 +151,7 @@ list-outputs:  ## List stack outputs
 		--query "Stacks[].Outputs"                                      \
 		--output text
 
-ipython: deps
+ipython: deps  ## Opens a rich python prompt in app's enviroment
 	cd $(SRC);                                                              \
 	$(PYTHON) -m IPython
 
@@ -161,7 +161,7 @@ test: deps ## Run tests
 	$(PYTHON) -m pytest $(TESTS)
 
 
-tdd: deps ## run tests on filesystem events
+tdd: deps ## Run tests, watches on filesystem events
 	cd $(SRC)                                                               \
 	&& $(PYTHON) -m pytest_watch \
 		--clear                                                         \
@@ -173,7 +173,7 @@ tdd: deps ## run tests on filesystem events
 		$(TESTS)
 
 
-debug_tdd: deps  ## debug tests on filesystem events
+debug_tdd: deps  ## Debug tests, watches on filesystem events
 	cd $(SRC)                                                               \
 	&& $(PYTHON) -m pytest_watch \
 		--clear                                                         \
@@ -186,12 +186,12 @@ debug_tdd: deps  ## debug tests on filesystem events
 		$(TESTS)
 
 
-debug: deps
+debug: deps  ## Debug tests
 	cd $(SRC)                                                               \
 	&& $(PYTHON) -m pytest --stepwise -vv --pdb $(TESTS)
 
 
-coverage: deps  ## run tests and report coverage
+coverage: deps  ## Run tests and report coverage
 	cd $(SRC)                                                               \
 	&& $(PYTHON) -m pytest                                                  \
 		-v --doctest-modules ./                                         \
@@ -200,13 +200,13 @@ coverage: deps  ## run tests and report coverage
 		$(TESTS)
 
 
-docker-build: .docker-build
+docker-build: .docker-build  ## Builds docker image
 .docker-build: app
 	docker build -t $(PROJECT) .
 	touch .docker-build
 
 
-docker-run: docker-build
+docker-run: docker-build  ## Runs docker image locally
 	docker run -d --name $(PROJECT)-$(STAGE) -p 80:80 $(PROJECT)
 
 #  vim: set ts=8 sw=8 tw=0 noet :

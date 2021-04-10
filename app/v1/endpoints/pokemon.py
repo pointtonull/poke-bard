@@ -43,6 +43,3 @@ async def get_pokemon_description(
             "name": name,
             "description": description,
         }
-    else:
-        raise HTTPException(status_code=406, detail="Unsupported output format")
-

@@ -63,3 +63,11 @@ def test__GET_pokemon__charizard__as_text(mock_network):
         "Charizard flies around the sky in search of powerful opponents. "
         "It breathes fire of such most heat it mealt stone."
     )
+
+def test__GET_pokemon__charizard__as_html(mock_network):
+    response = client.get("/pokemon/charizard?output_format=html")
+
+    assert response.status_code == 422
+    assert response.json()["detail"][0]["msg"] == (
+        "value is not a valid enumeration member; permitted: 'text', 'json'"
+    )

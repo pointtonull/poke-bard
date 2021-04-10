@@ -124,3 +124,7 @@ https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
 Using a lookup table based on DynamoDB.
 This approach offers longer TTL (the limit with API Gateway's build-in one is 3600 seconds).
 Why not ElasticCache with Redis? Just because the winnings of having the cache in a on-memory storage are beyond the requirements of this application, and 
+
+# Missing
+
+Datadog integration

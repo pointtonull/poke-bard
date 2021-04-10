@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 @metrics.timeit
 @ROUTER.get("/pokemon/{pokemon_id}")
-async def get_pokemon_description(
+def get_pokemon_description(
     pokemon_id: str, output_format: Optional[OutputFormat] = OutputFormat.json
 ):
     """

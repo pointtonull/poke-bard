@@ -59,10 +59,9 @@ The CloudFormation Template includes custom policies to keep it with minimal
 privileges required to run.
 
 FastAPI is a very fast and elegant API Framework that offers OpenAPI
-documentation, and good parallel processing support.
-
-FastAPI runs on top of Mangum library, which serves as a wrapper for ASGI APIs
-running inside of AWS Lambda and API Gateway. It provides an adapter, which:
+documentation, and good parallel processing support. It runs on top of Mangum
+library, which serves as a wrapper for ASGI APIs running inside of AWS Lambda
+and API Gateway. It provides an adapter, which:
 
 - routes requests made to the API Gateway to our Lambda function
 - routes Lambda function responses back to the API Gateway
@@ -82,7 +81,7 @@ infrastructure has many benefits:
 - authentication, and authorization is trivial using Cognito (and allows third
   party auth providers like Google or Facebook)
 
-
+![s3_artefacts](doc/s3_artefacts.png "S3 Artefacts (code and CF templates) ready for rollbacks.")
 
 
 ## Development Environment Setup

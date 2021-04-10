@@ -1,3 +1,8 @@
+# This project artefacts
+.cf.messages
+.deploy
+.upload
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

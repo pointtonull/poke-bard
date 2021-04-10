@@ -26,6 +26,8 @@ def get_pokemon(
     except PokemonNotFoundError as error:
         raise HTTPException(status_code=404, detail=str(error))
 
+    description = get_shakesperean_translation(description)
+
     if output_format == OutputFormat.text:
         response = description
     elif output_format == OutputFormat.json:

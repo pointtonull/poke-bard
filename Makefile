@@ -2,12 +2,11 @@ ROOT = $(realpath .)
 DEPS = $(ROOT)/deps
 SRC = $(ROOT)/app
 TESTS = $(ROOT)/tests
-DEV_DEPS = $(VIRTUAL_ENV)
+DEPS_DEV = $(VIRTUAL_ENV)
 REQUIREMENTS_DEV = $(realpath requirements.txt)
 REQUIREMENTS = ${SRC}/requirements.txt
 RECURSE=$(MAKE) --no-print-directory
-
-export PYTHONPATH=$(DEPS):$(SRC)
+PYTHON=PYTHONPATH=$(DEPS):$(SRC) python
 
 PROJECT = pokebard
 SERVICE = FastAPI_PoC
@@ -50,7 +49,7 @@ help:  ## Show this help.
 
 echo:  ## Print relevant variables
 	@echo DEPS = $(DEPS)
-	@echo DEV_DEPS = $(DEV_DEPS)
+	@echo DEPS_DEV = $(DEPS_DEV)
 	@echo LOCAL_PATH = $(LOCAL_PATH)
 	@echo PACKAGE = $(PACKAGE)
 	@echo PROJECT = $(PROJECT)
@@ -67,8 +66,8 @@ echo:  ## Print relevant variables
 
 
 run: $(DEPS)  ## Runs server locally
-	cd $(SRC);                                                              \
-	uvicorn --reload main:APP
+	cd $(SRC) &&                                                           \
+	$(PYTHON) -m uvicorn --reload main:APP
 
 deps: $(DEPS) $(DEPS_DEV)  # Installs all required dependencies
 
@@ -154,17 +153,17 @@ list-outputs:  ## List stack outputs
 
 ipython: deps
 	cd $(SRC);                                                              \
-	python -m IPython
+	$(PYTHON) -m IPython
 
 
 test: deps ## Run tests
 	cd $(SRC);                                                              \
-	python -m pytest $(TESTS)
+	$(PYTHON) -m pytest $(TESTS)
 
 
 tdd: deps ## run tests on filesystem events
 	cd $(SRC)                                                               \
-	&& ptw                                                                  \
+	&& $(PYTHON) -m pytest_watch \
 		--clear                                                         \
 		./                                                              \
 		$(TESTS)                                                        \
@@ -176,11 +175,10 @@ tdd: deps ## run tests on filesystem events
 
 debug_tdd: deps  ## debug tests on filesystem events
 	cd $(SRC)                                                               \
-	&& ptw                                                                  \
+	&& $(PYTHON) -m pytest_watch \
 		--clear                                                         \
-		--wait                                                          \
-		./                                                              \
 		--pdb                                                           \
+		./                                                              \
 		$(TESTS)                                                        \
 		--                                                              \
 		--stepwise                                                      \
@@ -190,12 +188,12 @@ debug_tdd: deps  ## debug tests on filesystem events
 
 debug: deps
 	cd $(SRC)                                                               \
-	&& python -m pytest --stepwise -vv --pdb $(TESTS)
+	&& $(PYTHON) -m pytest --stepwise -vv --pdb $(TESTS)
 
 
 coverage: deps  ## run tests and report coverage
 	cd $(SRC)                                                               \
-	&& python -m pytest                                                     \
+	&& $(PYTHON) -m pytest                                                  \
 		-v --doctest-modules ./                                         \
 		--cov=./ --cov-report=term-missing                              \
 		--ignore=$(DEPS)                                                \

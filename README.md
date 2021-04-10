@@ -1,7 +1,16 @@
 # Poke-Bard
 
+### OpenAPI
+
+You can access the interactive documentation using Swagger UI at:
+
+https://8qumbw8k6h.execute-api.eu-west-1.amazonaws.com/dev
+
+Using the API you can test queries using the browser.
 
 The API is deployed in AWS.
+
+### Example
 
 Usage example (using httpie):
 
@@ -15,15 +24,6 @@ Output format:
     "description": "Charizard flies 'round the sky in search of powerful opponents. 't breathes fire of such most wondrous heat yond 't melts aught. However, 't nev'r turns its fiery breath on any opponent weaker than itself."
 }
 ```
-
-### OpenAPI
-
-You can access the interactive documentation using Swagger UI at:
-
-https://8qumbw8k6h.execute-api.eu-west-1.amazonaws.com/dev
-
-Using the API you can test queries using the browser.
-
 
 ## Design and implementation
 
@@ -44,6 +44,8 @@ deploying steps:
 - `tdd`, `debug`, `run`, `test`, `coverage`: and more, to help debugging, and
   integration with CI/CD pipelines.
 - `docker-build`, and `docker-run`: to build and/or run dockerized.
+
+![make help](doc/make_help.png "Output of `make help`")
 
 ## Architecture
 
@@ -136,17 +138,23 @@ should be faster from now on.
 
 # Dockerfile
 
-Creating a dockerfile for fastapi is trivial[template]. So, I decided to take
-it an step further and deploy it using a serverless architecture.
+Creating a dockerfile for fastapi is trivial. I did created it since it's
+suggested as part of the exercise, but I think simple lambdas are good enough
+to deploy an experimental API that might be used only once.
 
-https://github.com/tiangolo/uvicorn-gunicorn-fastapi-docker
 
 # Cache
 
-Using a lookup table based on DynamoDB.
-This approach offers longer TTL (the limit with API Gateway's build-in one is 3600 seconds).
-Why not ElasticCache with Redis? Just because the winnings of having the cache in a on-memory storage are beyond the requirements of this application, and 
+Using a lookup table based on DynamoDB.  This approach offers longer TTL (the
+limit with API Gateway's build-in one is 3600 seconds).  Why not ElasticCache
+with Redis? Just because the winnings of having the cache in a full-fledged
+on-memory storage are beyond the requirements of this application.  This
+approach is free; and has minimal latency.
 
 # Missing
 
-Datadog integration
+With more time I would:
+- write some tests for `dynamodb_cache` module, it is the only file with less
+  than 100% coverage
+- as second iteration I would adjust architecture to usage patterns (datadog
+  metrics are crucial for this)
